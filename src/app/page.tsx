@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { Upload, Play, RotateCcw } from 'lucide-react';
-import SimulationScene from '@/components/SimulationScene';
+import ThreeJSRoboticArm from '@/components/ThreeJSRoboticArm';
 import { Location, GameObject } from '@/types/game';
 
 export default function Home() {
@@ -14,6 +14,17 @@ export default function Home() {
   const [selectedObject, setSelectedObject] = useState<GameObject | null>(null);
   const [targetLocation, setTargetLocation] = useState<Location | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Debug logging for state changes
+  console.log('🎯 [PAGE_STATE] Current state:', {
+    selectedObject,
+    selectedObjectType: typeof selectedObject,
+    selectedObjectKeys: selectedObject ? Object.keys(selectedObject) : null,
+    targetLocation,
+    targetLocationType: typeof targetLocation,
+    targetLocationKeys: targetLocation ? Object.keys(targetLocation) : null,
+    isAnimating
+  });
 
   // Game state
   const [gameObjects, setGameObjects] = useState<GameObject[]>([
@@ -66,10 +77,24 @@ export default function Home() {
       });
 
       const result = await response.json();
-      console.log('🎮 API Response:', result);
+      console.log('🎮 [API_RESPONSE] Full API Response:', result);
+      console.log('🎮 [API_RESPONSE] Object structure:', {
+        object: result.object,
+        objectType: typeof result.object,
+        objectKeys: result.object ? Object.keys(result.object) : null,
+        location: result.location,
+        locationType: typeof result.location,
+        locationKeys: result.location ? Object.keys(result.location) : null
+      });
       
       if (result.success) {
-        console.log('✅ Setting game state:', { object: result.object, location: result.location });
+        console.log('✅ [STATE_UPDATE] Setting game state:', { 
+          object: result.object, 
+          location: result.location 
+        });
+        console.log('✅ [STATE_UPDATE] About to call setSelectedObject with:', result.object);
+        console.log('✅ [STATE_UPDATE] About to call setTargetLocation with:', result.location);
+        
         setSelectedObject(result.object);
         setTargetLocation(result.location);
         setIsAnimating(true);
@@ -190,7 +215,7 @@ export default function Home() {
             <div className="space-y-3">
               <button
                 onClick={handleSubmit}
-                disabled={!prompt || !uploadedImage || isProcessing}
+                disabled={!prompt || isProcessing}
                 className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
               >
                 {isProcessing ? (
@@ -237,9 +262,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Center Panel - Simulation Scene */}
+          {/* Center Panel - 3D Simulation Scene */}
           <div className="lg:col-span-2">
-            <SimulationScene
+            <ThreeJSRoboticArm
               gameObjects={gameObjects}
               locations={locations}
               selectedObject={selectedObject}

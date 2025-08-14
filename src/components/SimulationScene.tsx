@@ -39,33 +39,171 @@ export default function SimulationScene({
         ref={sceneRef}
         className="relative w-full h-[600px] bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg border-2 border-gray-300 overflow-hidden"
       >
-        {/* Room Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 opacity-50"></div>
+        {/* Industrial Room Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 opacity-70"></div>
         
-        {/* Robotic Hands */}
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="w-full h-full" style={{
+            backgroundImage: `
+              linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '20px 20px'
+          }}></div>
+        </div>
+        
+        {/* Industrial Robotic Arms */}
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
-          <motion.div
-            animate={isAnimating ? {
-              y: [0, -20, 0],
-              rotate: [0, 5, -5, 0],
-            } : {}}
-            transition={{ duration: 2, repeat: isAnimating ? Infinity : 0 }}
-            className="flex space-x-4"
-          >
-            {/* Left Robotic Hand */}
-            <div className="w-16 h-20 bg-gradient-to-b from-gray-400 to-gray-600 rounded-full relative">
-              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-gray-300 rounded-full"></div>
-              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-3 bg-gray-500 rounded-full"></div>
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2 h-4 bg-gray-700 rounded-full"></div>
-            </div>
-            
-            {/* Right Robotic Hand */}
-            <div className="w-16 h-20 bg-gradient-to-b from-gray-400 to-gray-600 rounded-full relative">
-              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-gray-300 rounded-full"></div>
-              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-3 bg-gray-500 rounded-full"></div>
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2 h-4 bg-gray-700 rounded-full"></div>
-            </div>
-          </motion.div>
+          <div className="flex space-x-12">
+            {/* Left Robotic Arm - Picker */}
+            <motion.div
+              className="relative"
+              animate={isAnimating && selectedObject ? {
+                y: [0, -20, 0],
+              } : {}}
+              transition={{ 
+                duration: 1.5,
+                ease: "easeInOut"
+              }}
+            >
+              {/* Base */}
+              <div className="w-8 h-8 bg-gray-700 rounded-full mx-auto mb-3 shadow-lg"></div>
+              
+              {/* Arm Segments */}
+              <div className="relative">
+                {/* Upper Arm */}
+                <motion.div
+                  className="w-4 h-20 bg-orange-500 rounded-full mx-auto origin-bottom shadow-lg"
+                  animate={isAnimating && selectedObject ? {
+                    rotateZ: [0, -35, -35, 0],
+                  } : {}}
+                  transition={{ 
+                    duration: 1.5,
+                    ease: "easeInOut"
+                  }}
+                />
+                
+                {/* Forearm */}
+                <motion.div
+                  className="w-3 h-16 bg-orange-400 rounded-full mx-auto origin-top shadow-lg"
+                  style={{ marginTop: '-2px' }}
+                  animate={isAnimating && selectedObject ? {
+                    rotateZ: [0, 45, 45, 0],
+                  } : {}}
+                  transition={{ 
+                    duration: 1.5,
+                    ease: "easeInOut"
+                  }}
+                />
+                
+                {/* Gripper */}
+                <motion.div
+                  className="w-6 h-4 bg-gray-800 rounded mx-auto origin-top shadow-lg"
+                  style={{ marginTop: '-2px' }}
+                  animate={isAnimating && selectedObject ? {
+                    scaleY: [1, 1.3, 0.7, 1.3, 1],
+                  } : {}}
+                  transition={{ 
+                    duration: 1.5,
+                    ease: "easeInOut"
+                  }}
+                >
+                  {/* Gripper Fingers */}
+                  <div className="flex justify-between px-1.5">
+                    <motion.div 
+                      className="w-1 h-3 bg-gray-600 rounded-full"
+                      animate={isAnimating && selectedObject ? {
+                        scaleY: [1, 1.5, 0.8, 1.5, 1],
+                      } : {}}
+                      transition={{ duration: 1.5, ease: "easeInOut" }}
+                    />
+                    <motion.div 
+                      className="w-1 h-3 bg-gray-600 rounded-full"
+                      animate={isAnimating && selectedObject ? {
+                        scaleY: [1, 1.5, 0.8, 1.5, 1],
+                      } : {}}
+                      transition={{ duration: 1.5, ease: "easeInOut" }}
+                    />
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+
+            {/* Right Robotic Arm - Placer */}
+            <motion.div
+              className="relative"
+              animate={isAnimating && targetLocation ? {
+                y: [0, -20, 0],
+              } : {}}
+              transition={{ 
+                duration: 1.5,
+                ease: "easeInOut"
+              }}
+            >
+              {/* Base */}
+              <div className="w-8 h-8 bg-gray-700 rounded-full mx-auto mb-3 shadow-lg"></div>
+              
+              {/* Arm Segments */}
+              <div className="relative">
+                {/* Upper Arm */}
+                <motion.div
+                  className="w-4 h-20 bg-orange-500 rounded-full mx-auto origin-bottom shadow-lg"
+                  animate={isAnimating && targetLocation ? {
+                    rotateZ: [0, 35, 35, 0],
+                  } : {}}
+                  transition={{ 
+                    duration: 1.5,
+                    ease: "easeInOut"
+                  }}
+                />
+                
+                {/* Forearm */}
+                <motion.div
+                  className="w-3 h-16 bg-orange-400 rounded-full mx-auto origin-top shadow-lg"
+                  style={{ marginTop: '-2px' }}
+                  animate={isAnimating && targetLocation ? {
+                    rotateZ: [0, -45, -45, 0],
+                  } : {}}
+                  transition={{ 
+                    duration: 1.5,
+                    ease: "easeInOut"
+                  }}
+                />
+                
+                {/* Gripper */}
+                <motion.div
+                  className="w-6 h-4 bg-gray-800 rounded mx-auto origin-top shadow-lg"
+                  style={{ marginTop: '-2px' }}
+                  animate={isAnimating && targetLocation ? {
+                    scaleY: [1, 0.7, 1.3, 0.7, 1],
+                  } : {}}
+                  transition={{ 
+                    duration: 1.5,
+                    ease: "easeInOut"
+                  }}
+                >
+                  {/* Gripper Fingers */}
+                  <div className="flex justify-between px-1.5">
+                    <motion.div 
+                      className="w-1 h-3 bg-gray-600 rounded-full"
+                      animate={isAnimating && targetLocation ? {
+                        scaleY: [1, 0.8, 1.2, 0.8, 1],
+                      } : {}}
+                      transition={{ duration: 1.5, ease: "easeInOut" }}
+                    />
+                    <motion.div 
+                      className="w-1 h-3 bg-gray-600 rounded-full"
+                      animate={isAnimating && targetLocation ? {
+                        scaleY: [1, 0.8, 1.2, 0.8, 1],
+                      } : {}}
+                      transition={{ duration: 1.5, ease: "easeInOut" }}
+                    />
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
         </div>
 
         {/* Location Markers */}
@@ -96,11 +234,15 @@ export default function SimulationScene({
                 className="absolute w-20 h-20 cursor-pointer"
                 style={{ left: location.x - 10, top: location.y - 10 }}
                 animate={isAnimating && isSelected ? {
-                  scale: [1, 1.2, 1],
-                  y: [0, -50, 0],
-                  rotate: [0, 360],
+                  scale: [1, 1.3, 1.1],
+                  y: [0, -80, -60],
+                  rotate: [0, 180, 360],
+                  x: [0, -20, 0],
                 } : {}}
-                transition={{ duration: 2 }}
+                transition={{ 
+                  duration: 1.5,
+                  ease: "easeInOut"
+                }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
@@ -121,31 +263,54 @@ export default function SimulationScene({
           })}
         </AnimatePresence>
 
-        {/* Animation Path (when moving objects) */}
+        {/* Robotic Arm Movement Path */}
         {isAnimating && selectedObject && targetLocation && (
           <svg
             className="absolute inset-0 pointer-events-none"
             style={{ zIndex: 10 }}
           >
+            {/* Pick-up path (curved) */}
             <motion.path
-              d={`M ${getLocationCoords(selectedObject.location)?.x || 0} ${getLocationCoords(selectedObject.location)?.y || 0} L ${targetLocation.x} ${targetLocation.y}`}
-              stroke="url(#gradient)"
-              strokeWidth="3"
+              d={`M ${getLocationCoords(selectedObject.location)?.x || 0} ${getLocationCoords(selectedObject.location)?.y || 0} Q ${(getLocationCoords(selectedObject.location)?.x || 0) + 50} ${(getLocationCoords(selectedObject.location)?.y || 0) - 100} ${getLocationCoords(selectedObject.location)?.x || 0} ${(getLocationCoords(selectedObject.location)?.y || 0) - 80}`}
+              stroke="url(#pickupGradient)"
+              strokeWidth="4"
               fill="none"
-              strokeDasharray="10,5"
+              strokeDasharray="8,4"
               animate={{
-                strokeDashoffset: [0, -15],
+                strokeDashoffset: [0, -12],
               }}
               transition={{
-                duration: 2,
+                duration: 1.5,
                 repeat: Infinity,
                 ease: "linear"
               }}
             />
+            
+            {/* Placement path (straight) */}
+            <motion.path
+              d={`M ${getLocationCoords(selectedObject.location)?.x || 0} ${(getLocationCoords(selectedObject.location)?.y || 0) - 80} L ${targetLocation.x} ${targetLocation.y}`}
+              stroke="url(#placementGradient)"
+              strokeWidth="4"
+              fill="none"
+              strokeDasharray="8,4"
+              animate={{
+                strokeDashoffset: [0, -12],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+            
             <defs>
-              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#3B82F6" />
-                <stop offset="100%" stopColor="#8B5CF6" />
+              <linearGradient id="pickupGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#F59E0B" />
+                <stop offset="100%" stopColor="#F97316" />
+              </linearGradient>
+              <linearGradient id="placementGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#10B981" />
+                <stop offset="100%" stopColor="#059669" />
               </linearGradient>
             </defs>
           </svg>
